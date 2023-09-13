@@ -11,16 +11,15 @@ import torchvision
 import torchvision.transforms as transforms
 import torch.optim as optim
 from torch.utils.data import DataLoader
+# Assuming that we are on a CUDA machine, this should print a CUDA device:
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-# Assuming that we are on a CUDA machine, this should print a CUDA device:
-
-
+# Don't think this is required
 if '/opt/ros/kinetic/lib/python2.7/dist-packages' in sys.path:
     sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
 
 
-
+# Nueral Net class
 class Net(nn.Module):
     def __init__(self):
         super().__init__()
@@ -40,21 +39,16 @@ class Net(nn.Module):
         x = self.fc3(x)
         return x
 
+# Display an image
 def imshow(img):
     img = img / 2 + 0.5     # unnormalize
     npimg = img.numpy()
     plt.imshow(np.transpose(npimg, (1, 2, 0)))
     plt.show()
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print(device)
-    print_hi('PyCharm')
     transform = transforms.Compose(
         [transforms.ToTensor(),
          transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
@@ -99,7 +93,11 @@ if __name__ == '__main__':
     print('Finished Training')
     PATH = './cifar_net.pth'
     torch.save(net.state_dict(), PATH)
+    # Training is Complete and model is saved
 
+
+
+    # Now Test your model.
     dataiter = iter(testloader)
     images, labels = next(dataiter)
 
@@ -108,7 +106,7 @@ if __name__ == '__main__':
     imshow(torchvision.utils.make_grid(images))
     print('GroundTruth: ', ' '.join(f'{classes[labels[j]]:5s}' for j in range(4)))
 
-
+    # Don't need the GPU to run inference model. 
     net2 = Net()
     net2.load_state_dict(torch.load(PATH))
     outputs = net2(images)
